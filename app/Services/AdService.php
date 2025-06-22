@@ -90,15 +90,19 @@ class AdService
     }
 
     public function approve(Ad $ad)
-    {
-        $ad->update(['status' => 'active']);
-         SendAdConfirmationEmail::dispatch($ad);
+    {$ad = $ad->fresh();
+$this->update($ad, ['status' => 'active']);
+
+SendAdConfirmationEmail::dispatch($ad); 
+
+
 
     }
 
-    public function reject($id): void
-    {
-        $ad = Ad::with(['images', 'reviews'])->findOrFail($id);
+    public function reject(Ad $ad): void
+    {$ad = $ad->fresh();
+       
         $ad->update(['status' => 'rejected']);
+        SendAdConfirmationEmail::dispatch($ad); 
     }
 }

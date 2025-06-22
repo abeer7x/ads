@@ -22,33 +22,29 @@ class SendAdConfirmationEmail implements ShouldQueue
      */
     protected $ad;
 
-    public function __construct(Ad $ad)
+    public function __construct($ad)
     {
         $this->ad = $ad;
     }
 
-    /**
-     * Execute the job.
-     */
+
     public function handle(): void
-    {
-  
-           try {
-        $this->ad->load('user');
-               if (!$this->ad->user) {
-            Log::error('Ad user is null in Job', ['ad_id' => $this->ad->id]);
+    {  
+        if (!$this->ad) {
+            Log::error("Ad is null in SendAdConfirmationEmail job.");
+            return;
+        }
+        if (!$this->ad->user || !$this->ad->user->email) {
+            Log::error("User or email not found for Ad ID {$this->ad->id}");
             return;
         }
 
-        Log::info('Sending email to: ' . $this->ad->user->email);
-        Mail::to($this->ad->user->email)
-            ->send(new AdConfirmationMail($this->ad));
-    } catch (\Exception $e) {
-        Log::error('Error in SendAdConfirmationEmail Job: '.$e->getMessage(), [
-            'trace' => $e->getTraceAsString(),
-            'ad_id' => $this->ad->id,
-        ]);
-        throw $e;
+        try {
+            Mail::to($this->ad->user->email)->queue(new AdConfirmationMail($this->ad));
+        } catch (\Exception $e) {
+            Log::error('SendAdConfirmationEmail failed: ' . $e->getMessage());
+        }
     }
 }
-}
+
+

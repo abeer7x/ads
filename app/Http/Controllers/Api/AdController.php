@@ -59,10 +59,10 @@ class AdController extends Controller
         return $this->success(['message' => 'تمت الموافقة على الإعلان.']);
     }
 
-    public function reject($id)
+    public function reject(Request $request, Ad $ad)
     {
-        $this->authorize('reject', Ad::class);
-        $this->adService->reject($id);
+        $this->authorize('reject', $ad);
+        $this->adService->reject($ad);
 
         return $this->success(['message' => 'تم رفض الإعلان.']);
     }
