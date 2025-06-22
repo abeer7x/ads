@@ -1,17 +1,16 @@
 @component('mail::message')
-# مرحباً {{ $userName ?? 'مستخدم' }}
+# مرحباً {{ $userName }}
 
-لقد تم استلام إعلانك بنجاح!
-
----
-
-**العنوان:** {{ $adTitle ?? 'غير متوفر' }}  
-**الوصف:** {{ $adDescription ?? 'لا يوجد وصف' }}  
-**السعر:** {{ isset($adPrice) ? number_format($adPrice, 2) . ' $' : 'غير محدد' }}
+لقد تم {{ $ad->status === 'active' ? 'قبول' : 'رفض' }} إعلانك.
 
 ---
 
-شكراً لاستخدامك منصتنا.
+**العنوان:** {{ $ad->title ?? 'غير متوفر' }}  
+**الوصف:** {{ $ad->description ?? 'لا يوجد وصف' }}  
+**السعر:** {{ $ad->price ? number_format($ad->price, 2) . ' $' : 'غير محدد' }}
 
+---
+
+شكراً لاستخدامك منصتنا.  
 {{ config('app.name') }}
 @endcomponent

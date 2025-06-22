@@ -19,8 +19,9 @@ Route::post('/registerAdmin', [AuthController::class, 'register'])->middleware('
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('reviews', ReviewController::class);
         Route::apiResource('ads', AdController::class)->except(['index', 'show']);
-        Route::post('/ads/{id}/approve', [AdController::class, 'approve']);
-    Route::post('/ads/{id}/reject', [AdController::class, 'reject']);
+Route::post('ads/{ad}/approve', [AdController::class, 'approve']);
+
+    Route::post('ads/{ad}/reject', [AdController::class, 'reject']);
     Route::apiResource('categories', CategoryController::class);
     
 });

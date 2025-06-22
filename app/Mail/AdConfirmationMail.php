@@ -14,31 +14,27 @@ use Illuminate\Support\Facades\Log;
 class AdConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
-        public $userName;
-    public $adTitle;
-    public $adDescription;
-    public $adPrice;
+
+
+    public Ad $ad;
+
     /**
      * Create a new message instance.
      */
     public function __construct(Ad $ad)
     {
-    if (!$ad->user) {
-        Log::error('Ad user missing in Mailable', ['ad_id' => $ad->id]);
+        $this->ad = $ad;
     }
-
-    $this->userName = $ad->user->name ?? 'User';
-    $this->adTitle = $ad->title ?? 'No Title';
-    $this->adDescription = $ad->description ?? 'No Description';
-    $this->adPrice = $ad->price ?? 0;
-    }
-
-       public function build()
+    /**
+     * Build the message.
+     */
+    public function build()
     {
-        return $this->markdown('emails.ad.confirmation')        ->with([
-            'userName' => $this->userName,
-            'adTitle' => $this->adTitle,
-            'adDescription' => $this->adDescription,
-            'adPrice' => $this->adPrice,  ]);
+        return $this->subject('Your Ad Situation')
+                    ->markdown('emails.ads.confirmation'
+                    )->with([
+                    'ad' => $this->ad,
+                    'userName' => $this->ad->user->name ?? 'مستخدم',
+                ]);
     }
 }
